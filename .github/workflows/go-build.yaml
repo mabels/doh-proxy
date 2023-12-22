@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.platform }}
+    environment: ADVISER
     strategy:
       matrix:
         include:
