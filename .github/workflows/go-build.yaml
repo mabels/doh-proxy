@@ -36,10 +36,15 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u mabels --password-stdin
 
+      - name: Set up Docker Buildx
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/setup-buildx-action@v2
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4
         if: startsWith(github.ref, 'refs/tags/v')
         with:
+          workdir: ./v5
           version: latest
           args: release --clean
         env:
