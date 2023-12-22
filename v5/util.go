@@ -2,30 +2,30 @@ package dohProxy
 
 import (
 	"fmt"
-	nestedFormatter "github.com/antonfisher/nested-logrus-formatter"
-	"github.com/miekg/dns"
-	"github.com/sirupsen/logrus"
-	"github.com/zput/zxcTool/ztLog/zt_formatter"
 	"math/rand"
 	"net"
 	"path"
 	"runtime"
 	"strings"
 	"time"
+
+	nestedFormatter "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/miekg/dns"
+	"github.com/sirupsen/logrus"
+	"github.com/zput/zxcTool/ztLog/zt_formatter"
 )
 
-var(
+var (
 	Log = NewLogger()
 )
 
-func NewLogger()*logrus.Logger{
+func NewLogger() *logrus.Logger {
 	log := logrus.New()
 	log.SetReportCaller(true)
 
 	// use logrus default TextFormatter to get the IsColored() method.
 	defaultTextFormatter := logrus.TextFormatter{}
 	_, _ = defaultTextFormatter.Format(&logrus.Entry{Logger: logrus.New()})
-	isColoredLog := defaultTextFormatter.IsColored()
 	log.SetFormatter(&zt_formatter.ZtFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
 			filename := path.Base(f.File)
@@ -33,8 +33,8 @@ func NewLogger()*logrus.Logger{
 		},
 		Formatter: nestedFormatter.Formatter{
 			FieldsOrder: []string{"component", "category"},
-			NoColors: !isColoredLog,
-			NoFieldsColors: !isColoredLog,
+			// NoColors: !isColoredLog,
+			// NoFieldsColors: !isColoredLog,
 		},
 	})
 	return log
@@ -137,10 +137,10 @@ func ReplaceEDNS0Subnet(msg *dns.Msg, subnet *dns.EDNS0_SUBNET) {
 			for i, o := range edns0.Option {
 				switch o.(type) {
 				case *dns.EDNS0_SUBNET:
-					if subnet == nil{
+					if subnet == nil {
 						// nil will panic.
 						edns0.Option = append([]dns.EDNS0{subnet}, edns0.Option...)
-					}else{
+					} else {
 						edns0.Option[i] = subnet
 					}
 					return
@@ -164,10 +164,10 @@ func ReplaceEDNS0Padding(msg *dns.Msg, padding *dns.EDNS0_PADDING) {
 			for i, o := range edns0.Option {
 				switch o.(type) {
 				case *dns.EDNS0_PADDING:
-					if padding == nil{
+					if padding == nil {
 						// nil will panic.
 						edns0.Option = append([]dns.EDNS0{padding}, edns0.Option...)
-					}else{
+					} else {
 						edns0.Option[i] = padding
 					}
 					return
@@ -193,8 +193,7 @@ func GetMinTTLFromDnsMsg(msg *dns.Msg) (minTTL uint32) {
 	if len(msg.Answer) == 0 && len(msg.Ns) == 0 {
 		minTTL = 60
 	} else {
-		for _, rs :=
-		range [][]dns.RR{msg.Answer, msg.Ns} {
+		for _, rs := range [][]dns.RR{msg.Answer, msg.Ns} {
 			for _, r := range rs {
 				ttl := r.Header().Ttl
 				if ttl < minTTL {
@@ -214,7 +213,7 @@ func InsertIntoSlice(to []interface{}, from interface{}, inex int) []interface{}
 }
 
 // resolve domain name to ips (ipv4 + ipv6) using traditional udp+tcp, fixed 60s ttl
-func ResolveHostToIPClosure(name string, resolver string) (closure func()(ip4s []string, ip6s []string)) {
+func ResolveHostToIPClosure(name string, resolver string) (closure func() (ip4s []string, ip6s []string)) {
 	var ip4s, ip16s []string
 
 	const ttl = int64(60)
@@ -277,17 +276,17 @@ func ResolveHostToIPClosure(name string, resolver string) (closure func()(ip4s [
 		}
 		expireTime = time.Now().Unix() + ttl
 	}
-	return func()([]string,[]string){
-		if len(ip4s) == 0 && len(ip16s) == 0{
+	return func() ([]string, []string) {
+		if len(ip4s) == 0 && len(ip16s) == 0 {
 			Log.Infof("no cache.")
 			resolve()
-		}else if time.Now().Unix() > expireTime {
+		} else if time.Now().Unix() > expireTime {
 			go resolve()
 		}
 
 		// if empty result, ttl reset to 1
-		if len(ip4s) == 0 && len(ip16s) == 0{
-			expireTime = time.Now().Unix() +1
+		if len(ip4s) == 0 && len(ip16s) == 0 {
+			expireTime = time.Now().Unix() + 1
 		}
 		Log.Infof("using cache.")
 		return ip4s, ip16s

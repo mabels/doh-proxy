@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	proxy "github.com/tinkernels/doh-proxy/v5"
 	"math/rand"
 	"net/http"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"syscall"
 	"time"
 
+	proxy "github.com/tinkernels/doh-proxy/v5"
+
 	"github.com/miekg/dns"
 	"github.com/sirupsen/logrus"
 )
@@ -19,6 +20,8 @@ import (
 const (
 	gdnsEndpoint = "https://dns.google/dns-query"
 )
+
+var Version = "dev"
 
 // Create a new instance of the logger. You can have any number of instances.
 var log = proxy.Log
@@ -99,7 +102,7 @@ net/mask: will use specified subnet, e.g. 66.66.66.66/24.
 		"dns-resolver",
 		"",
 		`DNS resolver for retrieve ip of DoH enpoint host, e.g. "8.8.8.8:53";`,
-		)
+	)
 	versionFlag = flag.Bool(
 		"version",
 		false,
@@ -107,12 +110,14 @@ net/mask: will use specified subnet, e.g. 66.66.66.66/24.
 	)
 )
 
-func printVersion(){
-	fmt.Println("v5.0.1")
+var Commit = "dev"
+
+func printVersion() {
+	fmt.Printf("%s-%s\n", Version, Commit)
 }
 
-func serve(net <- chan string) {
-	listenNet := <- net
+func serve(net <-chan string) {
+	listenNet := <-net
 	log.Infof("starting %s service on %s", listenNet, *listenAddressFlag)
 
 	server := &dns.Server{Addr: *listenAddressFlag, Net: listenNet, TsigSecret: nil}
@@ -168,7 +173,6 @@ specify multiple as:
 	log.SetLevel(level)
 	fmt.Println("log level: ", log.GetLevel())
 
-
 	endpointIps, err := proxy.CSVtoIPs(*endpointIPsFlag)
 	if err != nil {
 		log.Fatalf("error parsing endpoint-ips: %v", err)
@@ -220,7 +224,7 @@ specify multiple as:
 	// serve until exit
 	sig := make(chan os.Signal)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	<- sig
+	<-sig
 
 	log.Infoln("servers exited, stopping")
 }
