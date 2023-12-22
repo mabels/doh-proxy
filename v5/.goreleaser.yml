@@ -69,7 +69,7 @@ changelog:
 dockers:
 - image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-amd64"]
   dockerfile: Dockerfile
-  use_buildx: true
+  use: buildx
   goarch: amd64
   build_flag_templates:
   - --platform=linux/amd64
@@ -84,7 +84,7 @@ dockers:
 
 - image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-arm64v8"]
   dockerfile: Dockerfile
-  use_buildx: true
+  use: buildx
   goarch: arm64
   build_flag_templates:
   - --platform=linux/arm64/v8
