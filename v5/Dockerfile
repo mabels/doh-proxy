@@ -1,6 +1,6 @@
 FROM scratch
 
 COPY ./doh-stub /bin/doh-stub
-COPY ./doh-proxy /bin/doh-proxy
+COPY ./doh-resolver /bin/doh-resolver
 
-CMD["echo", "choose doh-stub or doh-proxy"]
+CMD ["doh-resolver", "--help"]

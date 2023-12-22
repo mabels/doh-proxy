@@ -4,7 +4,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
-    id: "doh-proxy"
+    id: "doh-resolver"
     ldflags:
       - "-s -w -X main.Version='{{.Version}}' -X main.GitCommit={{.Commit}}"
     goos:
@@ -19,7 +19,7 @@ builds:
       - "6"
       - "7"
     main: ./cmd/resolver/main.go
-    binary: doh-proxy
+    binary: doh-resolver
     tags:
       - release
   - env:

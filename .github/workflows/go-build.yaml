@@ -1,4 +1,4 @@
-name: go-build-doh-proxy
+name: go-build-doh-resolver
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
         include:
           - platform: ubuntu-latest
 
-    name: Build ${{ join(matrix.platform, ',') }} doh-proxy
+    name: Build ${{ join(matrix.platform, ',') }} doh-resolver
     steps:
       - uses: actions/checkout@v3
 
@@ -22,10 +22,10 @@ jobs:
         with:
           go-version: 1.21
 
-      - name: Build doh-proxy
+      - name: Build doh-resolver
         run: |
           cd v5
-          go build -o doh-proxy -v ./cmd/resolver/main.go
+          go build -o doh-resolver -v ./cmd/resolver/main.go
 
       - name: Build doh-stub
         run: |
