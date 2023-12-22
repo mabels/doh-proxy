@@ -19,10 +19,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: 1.21
 
-      - name: Build
-        run: go build -v ./...
+      - name: Build doh-proxy
+        run: go build -o doh-proxy -v ./cmd/resolver/main.go
+
+      - name: Build doh-stub
+        run: go build -o doh-stub -v ./cmd/stub/main.go
 
       - name: Docker login
         if: startsWith(github.ref, 'refs/tags/v')
