@@ -69,6 +69,8 @@ changelog:
 dockers:
 - image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-amd64"]
   dockerfile: Dockerfile
+  use_buildx: true
+  goarch: amd64
   build_flag_templates:
   - --platform=linux/amd64
   - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -80,36 +82,12 @@ dockers:
   - --label=org.opencontainers.image.revision={{ .FullCommit }}
   - --label=org.opencontainers.image.licenses=APL2
 
-#- image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-i386"]
-#  dockerfile: Dockerfile
-#  build_flag_templates:
-#  - --platform=linux/i386
-#  - --label=org.opencontainers.image.title={{ .ProjectName }}
-#  - --label=org.opencontainers.image.description={{ .ProjectName }}
-#  - --label=org.opencontainers.image.url=https://github.com/mabels/{{ .ProjectName }}
-#  - --label=org.opencontainers.image.source=https://github.com/mabels/{{ .ProjectName }}
-#  - --label=org.opencontainers.image.version={{ .Version }}
-#  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-#  - --label=org.opencontainers.image.revision={{ .FullCommit }}
-#  - --label=org.opencontainers.image.licenses=APL2
-
 - image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-arm64v8"]
   dockerfile: Dockerfile
+  use_buildx: true
+  goarch: arm64
   build_flag_templates:
   - --platform=linux/arm64/v8
-  - --label=org.opencontainers.image.title={{ .ProjectName }}
-  - --label=org.opencontainers.image.description={{ .ProjectName }}
-  - --label=org.opencontainers.image.url=https://github.com/mabels/{{ .ProjectName }}
-  - --label=org.opencontainers.image.source=https://github.com/mabels/{{ .ProjectName }}
-  - --label=org.opencontainers.image.version={{ .Version }}
-  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-  - --label=org.opencontainers.image.revision={{ .FullCommit }}
-  - --label=org.opencontainers.image.licenses=APL2
-
-- image_templates: ["ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-armv7"]
-  dockerfile: Dockerfile
-  build_flag_templates:
-  - --platform=linux/arm/v7
   - --label=org.opencontainers.image.title={{ .ProjectName }}
   - --label=org.opencontainers.image.description={{ .ProjectName }}
   - --label=org.opencontainers.image.url=https://github.com/mabels/{{ .ProjectName }}
@@ -123,12 +101,10 @@ docker_manifests:
 - name_template: ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}
   image_templates:
   - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-amd64
-  - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-armv7
   - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-arm64v8
 - name_template: ghcr.io/mabels/{{ .ProjectName }}:latest
   image_templates:
   - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-amd64
-  - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-armv7
   - ghcr.io/mabels/{{ .ProjectName }}:{{ .Version }}-arm64v8
 
 
